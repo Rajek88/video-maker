@@ -45,7 +45,7 @@ const generateVideo = async (frames) => {
 
   await videoshow(frames, videoOptions)
     // .audio("song.mp3")
-    .save("video.mp4")
+    .save("../server/converter/output/video/img2video_output.mp4")
     .on("start", function (command) {
       console.log("ffmpeg process started:", command);
     })
@@ -105,3 +105,8 @@ module.exports.Converter = async function (req, res) {
     message: status,
   });
 };
+
+//I can send the processed array to response then the convert btn will get activated
+//and then when I click convert this new array is passed and now this time  it will create new video
+
+//to do : create new route Generate Video which will give me link
