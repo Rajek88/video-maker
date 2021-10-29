@@ -28,19 +28,53 @@ var download = function (uri, filename, callback) {
   count++;
 };
 
-module.exports.Converter = function (req, res) {
+const generateVideo = async (frames) => {
+  var videoOptions = {
+    fps: 25,
+    loop: 5, // seconds
+    transition: true,
+    transitionDuration: 1, // seconds
+    videoBitrate: 1024,
+    videoCodec: "libx264",
+    size: "640x?",
+    audioBitrate: "128k",
+    audioChannels: 2,
+    format: "mp4",
+    pixelFormat: "yuv420p",
+  };
+
+  await videoshow(frames, videoOptions)
+    // .audio("song.mp3")
+    .save("video.mp4")
+    .on("start", function (command) {
+      console.log("ffmpeg process started:", command);
+    })
+    .on("error", function (err, stdout, stderr) {
+      console.error("Error:", err);
+      console.error("ffmpeg stderr:", stderr);
+      return "error";
+    })
+    .on("end", function (output) {
+      console.error("Video created in:", output);
+      return "success";
+    });
+};
+
+module.exports.Converter = async function (req, res) {
   console.log("Req by React : ", req.body);
   const imgUrlObj = req.body;
 
   const frames = [];
-  for (let url of imgUrlObj) {
+  await imgUrlObj.forEach((url) => {
     download(url, count + ".jpeg", function () {
       console.log("done");
     });
     frames.push(
       path.join("../server/converter/output/", "img" + (count - 1) + ".jpeg")
     );
-  }
+  });
+
+  console.log("Frames ::: ", frames);
 
   // const input = conv.input({ f: "image2pipe", r: 30 });
   // conv.output("out.mp4", { vcodec: "libx264", pix_fmt: "yuv420p" });
@@ -66,34 +100,8 @@ module.exports.Converter = function (req, res) {
 
   // var images = ["step1.jpg", "step2.jpg", "step3.jpg", "step4.jpg"];
 
-  var videoOptions = {
-    fps: 25,
-    loop: 5, // seconds
-    transition: true,
-    transitionDuration: 1, // seconds
-    videoBitrate: 1024,
-    videoCodec: "libx264",
-    size: "640x?",
-    audioBitrate: "128k",
-    audioChannels: 2,
-    format: "mp4",
-    pixelFormat: "yuv420p",
-  };
-
-  videoshow(frames, videoOptions)
-    // .audio("song.mp3")
-    .save("video.mp4")
-    .on("start", function (command) {
-      console.log("ffmpeg process started:", command);
-    })
-    .on("error", function (err, stdout, stderr) {
-      console.error("Error:", err);
-      console.error("ffmpeg stderr:", stderr);
-    })
-    .on("end", function (output) {
-      console.error("Video created in:", output);
-    });
+  const status = await generateVideo(frames);
   return res.status(200).json({
-    message: "success",
+    message: status,
   });
 };
