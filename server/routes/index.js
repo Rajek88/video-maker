@@ -1,7 +1,7 @@
-import { Router } from "express";
-const router = Router();
+const express = require("express");
+const router = express.Router();
 
 //start listening to request
-router.post("/converter", require("../converter").default);
+router.post("/converter", require("../converter"));
 
-export default router;
+module.exports = router;

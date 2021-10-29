@@ -1,13 +1,13 @@
-import express from "express";
+const express = require("express");
 const port = 8000;
 const app = express();
 
 // middleware
 // express router
-
-app.use("/", require("./routes").default);
-
 //start listening ti request
+
+app.use("/", require("./routes"));
+console.log("Server started at port : ", port);
 
 //setup listener
 app.listen(port, function (error) {
