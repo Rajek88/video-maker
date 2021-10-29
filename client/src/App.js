@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { img2vid } from "./Converter";
+// import { img2vid } from "./Converter";
 
 function App() {
   const [formValues, setFormValues] = useState([{ url: "" }]);
@@ -21,9 +21,23 @@ function App() {
   };
 
   let handleSubmit = (event) => {
+    console.log("submitting");
+
     event.preventDefault();
-    img2vid(formValues);
-    // alert(JSON.stringify(formValues));
+    // img2vid(formValues);
+    alert(JSON.stringify(formValues));
+    let toSend = JSON.stringify(formValues);
+    const makeRequest = async () => {
+      console.log("submitting......");
+
+      const response = await fetch("http://localhost:8000/converter/convert/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: toSend,
+      });
+      console.log(await response.json());
+    };
+    makeRequest();
   };
 
   return (
@@ -59,7 +73,7 @@ function App() {
           >
             Add
           </button>
-          <button className="button submit" type="submit" id="rec">
+          <button className="button submit" type="submit">
             Submit
           </button>
         </div>

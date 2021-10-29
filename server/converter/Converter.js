@@ -3,24 +3,28 @@ var fs = require("fs");
 const conv = new ffmpeg.Converter();
 
 module.exports.Converter = function (req, res) {
-  console.log("Req by React : ", req);
+  console.log("Req by React : ", req.body);
+  return res.status(200).json({
+    message: "success",
+  });
 
-  const frames = [];
+  // const frames = [];
 
-  const input = conv({ f: "image2pipe", r: 30 });
-  conv.output("out.mp4", { vcodec: "libx264", pix_fmt: "yuv420p" });
+  // const input = conv.input({ f: "image2pipe", r: 30 });
+  // conv.output("out.mp4", { vcodec: "libx264", pix_fmt: "yuv420p" });
 
-  frames
-    .map(
-      (filename) => () =>
-        new Promise((fulfill, reject) =>
-          fs
-            .createReadStream(filename) //<--- here's the main difference
-            .on("end", fulfill)
-            .on("error", reject)
-            .pipe(input, { end: false })
-        )
-    )
-    .reduce((prev, next) => prev.then(next), Promise.resolve())
-    .then(() => input.end());
+  // frames
+  //   .map(
+  //     (filename) => () =>
+  //       new Promise((fulfill, reject) =>
+  //         fs
+  //           .createReadStream(filename) //<--- here's the main difference
+  //           .on("end", fulfill)
+  //           .on("error", reject)
+  //           .pipe(input, { end: false })
+  //       )
+  //   )
+  //   .reduce((prev, next) => prev.then(next), Promise.resolve())
+  //   .then(() => input.end());
+  // return res.end("<h1>Request Received</h1>");
 };
