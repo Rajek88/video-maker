@@ -1,7 +1,8 @@
 import { Router } from "express";
+import { Converter } from "./Converter";
 const router = Router();
 
 //start listening to request
-router.post("/converter", require("../converter").default);
+router.post("/convert", Converter);
 
 export default router;
