@@ -22,6 +22,7 @@ const app = express();
 // });
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use("/", express.static(__dirname + "converter/output"));
 app.use(cors());
 
 // express router
