@@ -14,6 +14,7 @@ const sharp = require("sharp");
 
 let count = 0;
 
+// this is download function which will download our image files
 var download = function (uri, filename, callback) {
   request.head(uri, function (err, res, body) {
     console.log("content-type:", res.headers["content-type"]);
@@ -43,6 +44,7 @@ var download = function (uri, filename, callback) {
   count++;
 };
 
+// this wil be get triggered when user clicks on submit button
 module.exports.Converter = async function (req, res) {
   console.log("Req by React : ", req.body);
   let imgUrlObj = req.body;
@@ -86,8 +88,9 @@ module.exports.Converter = async function (req, res) {
 
 //to do : create new route Generate Video which will give me link
 
+// this will get triggered when user clicks on generate button
 module.exports.Generator = async (req, res) => {
-  //generate video
+  //generate video with following options
 
   const generateVideo = async (frames) => {
     var videoOptions = {
@@ -150,6 +153,8 @@ module.exports.Generator = async (req, res) => {
   }
 };
 
+// this will be get triggered by the UI when Generate is completed
+
 module.exports.ShowVideo = (req, res) => {
   console.log("Showing Video");
 
@@ -165,6 +170,7 @@ module.exports.ShowVideo = (req, res) => {
   );
 };
 
+// this will get triggerd when user wants to set music
 module.exports.SetAudio = (req, res) => {
   const audioURL = req.body.audioURL;
   console.log("Trying to set audio ", req);

@@ -2,33 +2,40 @@ import React, { useState } from "react";
 // import { img2vid } from "./Converter";
 
 function App() {
+  // states for various purposes
   const [formValues, setFormValues] = useState([{ url: "" }]);
   const [uploaded, setUploaded] = useState(false);
   const [generated, setGenerated] = useState(false);
   const [frames, setFrames] = useState([]);
+  // this will be my default audio initially
   const [audioURL, setAudioURL] = useState(
     "https://www.bensound.com/bensound-music/bensound-anewbeginning.mp3"
   );
 
+  // to handle the input change of form
   let handleChange = (i, e) => {
     let newFormValues = [...formValues];
     newFormValues[i][e.target.name] = e.target.value;
     setFormValues(newFormValues);
   };
 
+  // to handle addition or removal of formfield
   let addFormFields = () => {
     setFormValues([...formValues, { url: "" }]);
   };
 
+  // to remove form field
   let removeFormFields = (i) => {
     let newFormValues = [...formValues];
     newFormValues.splice(i, 1);
     setFormValues(newFormValues);
   };
 
+  // when user clicks on generate button
   let handleGenerate = () => {
     setGenerated(false);
     console.log("in React  frames ", frames);
+    // send all the urls stored in frames by stringifying it
     let sendFrames = JSON.stringify(frames);
     const generateVideo = async () => {
       const response = await fetch(
@@ -53,10 +60,12 @@ function App() {
     generateVideo();
   };
 
+  // handle when audio url is getting changed
   const handleAudioChange = (e) => {
     setAudioURL(e.target.value);
   };
 
+  // handle when user clicks on set audio
   const handleSetAudio = () => {
     const makeRequest = async () => {
       console.log("submitting......");
@@ -80,6 +89,7 @@ function App() {
     makeRequest();
   };
 
+  // handle when user clicks on submit button
   let handleSubmit = (event) => {
     console.log("submitting");
 
@@ -108,7 +118,7 @@ function App() {
     };
     makeRequest();
   };
-
+  // App UI
   return (
     <div className="main">
       {generated && (
