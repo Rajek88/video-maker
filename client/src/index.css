@@ -24,18 +24,42 @@ code {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: 1px solid rgb(107, 0, 128);
+  /* border: 1px solid rgb(107, 0, 128); */
 }
 .main {
+  margin-top: 5%;
   width: 90%;
   max-width: 640px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: 1px solid green;
+  /* border: 1px solid green; */
 }
 
+.audio-input {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.audio-input-bar {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.audio-input-bar input {
+  width: 80%;
+  height: 20px;
+  padding: 2px 5px;
+  border-radius: 30px;
+  border: 1px solid grey;
+  margin: 10px;
+}
 .urlForm {
   width: 100%;
   display: flex;
@@ -53,9 +77,9 @@ code {
   border-radius: 30px;
 }
 
-.urlForm label {
+label {
   color: rgb(53, 162, 252);
-  font-size: 30px;
+  font-size: 20px;
   font-weight: 700;
 }
 .urlForm input {

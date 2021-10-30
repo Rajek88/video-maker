@@ -124,15 +124,17 @@ function App() {
         ></video>
       )}
       <div className="audio-input">
-        <label>Enter URLs of your music </label>
-        <div>
+        <label>Enter URL of your music </label>
+        <div className="audio-input-bar">
           <input
             type="url"
             name="audiourl"
             value={audioURL || ""}
             onChange={(e) => handleAudioChange(e)}
           />
-          <button onClick={() => handleSetAudio()}>Set Audio</button>
+          <button className="button" onClick={() => handleSetAudio()}>
+            Set Audio
+          </button>
         </div>
       </div>
       <form onSubmit={handleSubmit} className="urlForm">
