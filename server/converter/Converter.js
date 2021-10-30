@@ -20,7 +20,7 @@ var download = function (uri, filename, callback) {
     request(uri)
       .pipe(
         fs.createWriteStream(
-          path.join("../server/converter/output/", "img" + filename)
+          path.join("../server/converter/images/", "img" + filename)
         )
       )
       .on("close", callback);
@@ -75,7 +75,7 @@ module.exports.Converter = async function (req, res) {
         console.log("done");
       });
       frames.push(
-        path.join("../server/converter/output/", "img" + (count - 1) + ".jpeg")
+        path.join("../server/converter/images/", "img" + (count - 1) + ".jpeg")
       );
     });
 
