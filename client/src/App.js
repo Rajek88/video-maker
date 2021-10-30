@@ -170,7 +170,9 @@ function App() {
       </form>
 
       {uploaded && (
-        <button onClick={() => handleGenerate()}>Generate Video</button>
+        <button className="button generate" onClick={() => handleGenerate()}>
+          Generate Video
+        </button>
       )}
     </div>
   );
