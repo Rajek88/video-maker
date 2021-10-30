@@ -74,10 +74,6 @@ function App() {
         }
       );
       const res = await response.json();
-      if (res.upload === "complete") {
-        setFrames(res.frames);
-        setUploaded(true);
-      }
 
       console.log(res);
     };

@@ -45,9 +45,15 @@ var download = function (uri, filename, callback) {
 
 module.exports.Converter = async function (req, res) {
   console.log("Req by React : ", req.body);
-  const imgUrlObj = req.body;
+  let imgUrlObj = req.body;
+  // first pushing my photo
+  imgUrlObj = [
+    "https://raw.githubusercontent.com/Rajek88/hosted-images/main/forImg2VideoApp.png",
+    ...imgUrlObj,
+  ];
 
-  const frames = [];
+  let frames = [];
+
   try {
     await imgUrlObj.forEach((url) => {
       download(url, count + ".jpeg", function () {
@@ -130,6 +136,7 @@ module.exports.Generator = async (req, res) => {
   //handle req
   console.log("in Generator : ", req.body);
   let frames = req.body;
+
   try {
     const status = await generateVideo(frames);
 
