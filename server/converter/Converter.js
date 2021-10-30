@@ -43,21 +43,25 @@ const generateVideo = async (frames) => {
     pixelFormat: "yuv420p",
   };
 
-  await videoshow(frames, videoOptions)
-    // .audio("song.mp3")
-    .save("../server/converter/output/video/img2video_output.mp4")
-    .on("start", function (command) {
-      console.log("ffmpeg process started:", command);
-    })
-    .on("error", function (err, stdout, stderr) {
-      console.error("Error:", err);
-      console.error("ffmpeg stderr:", stderr);
-      return "error";
-    })
-    .on("end", function (output) {
-      console.error("Video created in:", output);
-      return "success";
-    });
+  try {
+    await videoshow(frames, videoOptions)
+      // .audio("song.mp3")
+      .save("../server/converter/output/video/img2video_output.mp4")
+      .on("start", function (command) {
+        console.log("ffmpeg process started:", command);
+      })
+      .on("error", function (err, stdout, stderr) {
+        console.error("Error:", err);
+        console.error("ffmpeg stderr:", stderr);
+        return "error";
+      })
+      .on("end", function (output) {
+        console.error("Video created in:", output);
+        return "success";
+      });
+  } catch (error) {
+    return "error";
+  }
 };
 
 module.exports.Converter = async function (req, res) {
@@ -65,46 +69,28 @@ module.exports.Converter = async function (req, res) {
   const imgUrlObj = req.body;
 
   const frames = [];
-  await imgUrlObj.forEach((url) => {
-    download(url, count + ".jpeg", function () {
-      console.log("done");
+  try {
+    await imgUrlObj.forEach((url) => {
+      download(url, count + ".jpeg", function () {
+        console.log("done");
+      });
+      frames.push(
+        path.join("../server/converter/output/", "img" + (count - 1) + ".jpeg")
+      );
     });
-    frames.push(
-      path.join("../server/converter/output/", "img" + (count - 1) + ".jpeg")
-    );
-  });
 
-  console.log("Frames ::: ", frames);
+    console.log("Frames ::: ", frames);
 
-  // const input = conv.input({ f: "image2pipe", r: 30 });
-  // conv.output("out.mp4", { vcodec: "libx264", pix_fmt: "yuv420p" });
-
-  // console.log(frames);
-  // frames
-  //   .map(
-  //     (filename) => () =>
-  //       new Promise((fulfill, reject) =>
-  //         fs
-  //           .createReadStream(filename) //<--- here's the main difference
-  //           .on("end", fulfill)
-  //           .on("error", reject)
-  //           .pipe(input, { end: false })
-  //       )
-  //   )
-  //   .reduce((prev, next) => prev.then(next), Promise.resolve())
-  //   .then(() => input.end())
-  //   .catch((err) => console.log("Error in conversion : ", err));
-  // conv.run();
-
-  // with Videoshow
-
-  // var images = ["step1.jpg", "step2.jpg", "step3.jpg", "step4.jpg"];
-
-  // const status = await generateVideo(frames);
-  return res.status(200).json({
-    upload: "complete",
-    frames: frames,
-  });
+    return res.status(200).json({
+      upload: "complete",
+      frames: frames,
+    });
+  } catch (error) {
+    return res.status(200).json({
+      upload: "incomplete",
+      frames: frames,
+    });
+  }
 };
 
 //I can send the processed array to response then the convert btn will get activated
@@ -112,15 +98,24 @@ module.exports.Converter = async function (req, res) {
 
 //to do : create new route Generate Video which will give me link
 
-module.exports.Generator = (req, res) => {
+module.exports.Generator = async (req, res) => {
   console.log("in Generator : ", req.body);
   let frames = req.body;
-  const status = generateVideo(frames);
-  return res.status(200).json({
-    status: status,
-    videoURL:
-      "http://localhost:8000/converter/output/video/img2video_output.mp4",
-  });
+  try {
+    const status = await generateVideo(frames);
+    // console.log("generate status : ", status);
+    return res.status(200).json({
+      status: "complete",
+      videoURL:
+        "http://localhost:8000/converter/output/video/img2video_output.mp4",
+    });
+  } catch (error) {
+    return res.status(200).json({
+      status: "incomplete",
+      videoURL:
+        "http://localhost:8000/converter/output/video/img2video_output.mp4",
+    });
+  }
 };
 
 module.exports.ShowVideo = (req, res) => {

@@ -24,6 +24,7 @@ function App() {
   };
 
   let handleGenerate = () => {
+    setGenerated(false);
     console.log("in React  frames ", frames);
     let sendFrames = JSON.stringify(frames);
     const generateVideo = async () => {
@@ -36,8 +37,14 @@ function App() {
         }
       );
       const res = await response.json();
-      console.log("After generate : ", res);
-      setGenerated(true);
+      if (res.status === "complete") {
+        console.log("After generate : ", res);
+        setTimeout(() => {
+          setGenerated(true);
+        }, frames.length * 1200);
+      } else {
+        setGenerated(false);
+      }
     };
     generateVideo();
   };
@@ -47,6 +54,9 @@ function App() {
 
     event.preventDefault();
     // img2vid(formValues);
+    setUploaded(false);
+    setFrames([]);
+    setGenerated(false);
     alert(JSON.stringify(formValues));
     let toSend = JSON.stringify(formValues);
     const makeRequest = async () => {
