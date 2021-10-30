@@ -7,6 +7,10 @@ function App() {
   const [uploaded, setUploaded] = useState(false);
   const [generated, setGenerated] = useState(false);
   const [frames, setFrames] = useState([]);
+  const [loop, setLoop] = useState(5);
+  const [fps, setfps] = useState(25);
+  // const loop = 5;
+  // const fps = 25;
   // this will be my default audio initially
   const [audioURL, setAudioURL] = useState(
     "https://www.bensound.com/bensound-music/bensound-anewbeginning.mp3"
@@ -17,6 +21,13 @@ function App() {
     let newFormValues = [...formValues];
     newFormValues[i][e.target.name] = e.target.value;
     setFormValues(newFormValues);
+  };
+
+  let handleLoopChange = (e) => {
+    setLoop(e.target.value);
+  };
+  let handleFpsChange = (e) => {
+    setfps(e.target.value);
   };
 
   // to handle addition or removal of formfield
@@ -36,14 +47,18 @@ function App() {
     setGenerated(false);
     console.log("in React  frames ", frames);
     // send all the urls stored in frames by stringifying it
-    let sendFrames = JSON.stringify(frames);
+    let sendBody = JSON.stringify({
+      frames: frames,
+      fps: fps,
+      loop: loop,
+    });
     const generateVideo = async () => {
       const response = await fetch(
         "http://localhost:8000/converter/generate/",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: sendFrames,
+          body: sendBody,
         }
       );
       const res = await response.json();
@@ -121,7 +136,7 @@ function App() {
   // App UI
   return (
     <div className="main">
-      <h1>Rajendra's Img2Video Converter</h1>
+      <h1 style={{ color: "#000" }}>Rajendra's Img2Video Converter</h1>
       {generated && (
         <video
           className="video-player"
@@ -130,6 +145,30 @@ function App() {
           autoPlay
         ></video>
       )}
+      <div className="video-options">
+        <label>Video Settings</label>
+
+        <div className="video-options-left">
+          Duration of each image
+          <input
+            type="number"
+            max="10"
+            value={loop}
+            name="loop"
+            onChange={(e) => handleLoopChange(e)}
+          />
+        </div>
+        <div className="video-options-right">
+          Frames oer second ( FPS )
+          <input
+            type="number"
+            max="50"
+            value={fps}
+            name="fps"
+            onChange={(e) => handleFpsChange(e)}
+          />
+        </div>
+      </div>
       <div className="audio-input">
         <label>Enter URL of your music </label>
         <div className="audio-input-bar">
@@ -166,6 +205,7 @@ function App() {
             ) : null}
           </div>
         ))}
+
         <div className="button-section">
           <button
             className="button add"

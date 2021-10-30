@@ -11,6 +11,11 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-image: url("https://cdn.pixabay.com/photo/2017/08/12/10/13/background-2633962_960_720.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
 }
 
 code {
@@ -43,6 +48,13 @@ code {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: rgba(202, 230, 255, 0.5);
+  /* border: 1px solid rgb(53, 162, 252); */
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  margin: 10px 0px;
+  padding: 10px 0px;
 }
 .audio-input-bar {
   width: 100%;
@@ -66,6 +78,13 @@ code {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: rgba(202, 230, 255, 0.5);
+  /* border: 1px solid rgb(53, 162, 252); */
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  margin: 10px 0px;
+  padding: 10px 0px;
 }
 
 .form-inline {
@@ -106,4 +125,26 @@ label {
 
 .generate {
   background-color: rgb(0, 151, 126);
+}
+
+.video-options {
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgba(202, 230, 255, 0.5);
+  /* border: 1px solid rgb(53, 162, 252); */
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  margin: 10px 0px;
+  padding: 10px 0px;
+  /* flex-wrap: wrap; */
+}
+.video-options input {
+  border-radius: 10px;
+  border: 1px solid rgb(53, 162, 252);
+  padding: 5px 5px;
 }

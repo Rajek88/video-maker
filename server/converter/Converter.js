@@ -94,8 +94,8 @@ module.exports.Generator = async (req, res) => {
 
   const generateVideo = async (frames) => {
     var videoOptions = {
-      fps: 25,
-      loop: 5, // seconds
+      fps: req.body.fps,
+      loop: req.body.loop, // seconds
       transition: true,
       transitionDuration: 1, // seconds
       videoBitrate: 1024,
@@ -138,7 +138,7 @@ module.exports.Generator = async (req, res) => {
 
   //handle req
   console.log("in Generator : ", req.body);
-  let frames = req.body;
+  let frames = req.body.frames;
 
   try {
     const status = await generateVideo(frames);
