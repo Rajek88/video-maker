@@ -35,7 +35,8 @@ function App() {
         headers: { "Content-Type": "application/json" },
         body: toSend,
       });
-      console.log(await response.json());
+      const res = await response.json();
+      console.log(res);
     };
     makeRequest();
   };

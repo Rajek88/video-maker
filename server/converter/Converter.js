@@ -100,9 +100,9 @@ module.exports.Converter = async function (req, res) {
 
   // var images = ["step1.jpg", "step2.jpg", "step3.jpg", "step4.jpg"];
 
-  const status = await generateVideo(frames);
+  // const status = await generateVideo(frames);
   return res.status(200).json({
-    message: status,
+    upload: "complete",
   });
 };
 
@@ -110,3 +110,53 @@ module.exports.Converter = async function (req, res) {
 //and then when I click convert this new array is passed and now this time  it will create new video
 
 //to do : create new route Generate Video which will give me link
+
+module.exports.Generator = async (req, res) => {
+  const status = await generateVideo(frames);
+  return res.status(200).json({
+    status: status,
+    videoURL:
+      "http://localhost:8000/converter/output/video/img2video_output.mp4",
+  });
+};
+
+module.exports.ShowVideo = (req, res) => {
+  var stat = fs.statSync(
+    "../server/converter/output/video/img2video_output.mp4"
+  );
+  // res.setHeader(`Content-Type: video/mpeg, Content-Length : ${stat.size}`);
+  // var range = req.headers.range;
+  // if (!range) {
+  //   // 416 Wrong range
+  //   return res.sendStatus(416);
+  // }
+  // var positions = range.replace(/bytes=/, "").split("-");
+  // var start = parseInt(positions[0], 10);
+  // var total = stat.size;
+  // var end = positions[1] ? parseInt(positions[1], 10) : total - 1;
+  // var chunksize = end - start + 1;
+
+  // res.setHeader(206, {
+  //   "Content-Range": "bytes " + start + "-" + end + "/" + total,
+  //   "Accept-Ranges": "bytes",
+  //   "Content-Length": chunksize,
+  //   "Content-Type": "video/mp4",
+  // });
+
+  console.log("Showing Video");
+  // return res.end(
+  //   `<video src="http://localhost:8000/converter/output/video/img2video_output.mp4">
+  //     Video
+  //   </video>`
+  // );
+  return res.sendFile(
+    __dirname + "/output/video/img2video_output.mp4",
+    function (err) {
+      if (err) {
+        console.log("error in serving video :: ", err);
+      } else {
+        console.log("File Sent in response");
+      }
+    }
+  );
+};
