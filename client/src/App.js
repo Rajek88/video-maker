@@ -41,6 +41,7 @@ function App() {
         console.log("After generate : ", res);
         setTimeout(() => {
           setGenerated(true);
+          setUploaded(false);
         }, frames.length * 1200);
       } else {
         setGenerated(false);

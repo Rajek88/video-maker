@@ -8,6 +8,7 @@ ffmpeg.setFfprobePath(ffprobePath);
 const request = require("request");
 var fs = require("fs");
 const path = require("path");
+const fsExtra = require("fs-extra");
 // const conv = new ffmpeg.Converter();
 
 let count = 0;
@@ -57,6 +58,7 @@ const generateVideo = async (frames) => {
       })
       .on("end", function (output) {
         console.error("Video created in:", output);
+        fsExtra.emptyDirSync("../server/converter/images/");
         return "success";
       });
   } catch (error) {
