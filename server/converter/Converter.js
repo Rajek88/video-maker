@@ -103,6 +103,7 @@ module.exports.Converter = async function (req, res) {
   // const status = await generateVideo(frames);
   return res.status(200).json({
     upload: "complete",
+    frames: frames,
   });
 };
 
@@ -111,8 +112,10 @@ module.exports.Converter = async function (req, res) {
 
 //to do : create new route Generate Video which will give me link
 
-module.exports.Generator = async (req, res) => {
-  const status = await generateVideo(frames);
+module.exports.Generator = (req, res) => {
+  console.log("in Generator : ", req.body);
+  let frames = req.body;
+  const status = generateVideo(frames);
   return res.status(200).json({
     status: status,
     videoURL:

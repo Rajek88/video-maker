@@ -3,6 +3,9 @@ import React, { useState } from "react";
 
 function App() {
   const [formValues, setFormValues] = useState([{ url: "" }]);
+  const [uploaded, setUploaded] = useState(false);
+  const [generated, setGenerated] = useState(false);
+  const [frames, setFrames] = useState([]);
 
   let handleChange = (i, e) => {
     let newFormValues = [...formValues];
@@ -18,6 +21,25 @@ function App() {
     let newFormValues = [...formValues];
     newFormValues.splice(i, 1);
     setFormValues(newFormValues);
+  };
+
+  let handleGenerate = () => {
+    console.log("in React  frames ", frames);
+    let sendFrames = JSON.stringify(frames);
+    const generateVideo = async () => {
+      const response = await fetch(
+        "http://localhost:8000/converter/generate/",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: sendFrames,
+        }
+      );
+      const res = await response.json();
+      console.log("After generate : ", res);
+      setGenerated(true);
+    };
+    generateVideo();
   };
 
   let handleSubmit = (event) => {
@@ -36,6 +58,10 @@ function App() {
         body: toSend,
       });
       const res = await response.json();
+      if (res.upload === "complete") {
+        setFrames(res.frames);
+        setUploaded(true);
+      }
 
       console.log(res);
     };
@@ -44,11 +70,13 @@ function App() {
 
   return (
     <div>
-      <video
-        src="http://localhost:8000/converter/output/video/img2video_output.mp4"
-        controls
-        autoPlay
-      ></video>
+      {generated && (
+        <video
+          src="http://localhost:8000/converter/output/video/img2video_output.mp4"
+          controls
+          autoPlay
+        ></video>
+      )}
       <form onSubmit={handleSubmit}>
         {formValues.map((element, index) => (
           <div className="form-inline" key={index}>
@@ -84,6 +112,10 @@ function App() {
           </button>
         </div>
       </form>
+
+      {uploaded && (
+        <button onClick={() => handleGenerate()}>Generate Video</button>
+      )}
     </div>
   );
 }
