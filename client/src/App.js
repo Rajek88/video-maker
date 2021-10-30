@@ -36,6 +36,7 @@ function App() {
         body: toSend,
       });
       const res = await response.json();
+
       console.log(res);
     };
     makeRequest();
@@ -43,7 +44,11 @@ function App() {
 
   return (
     <div>
-      <canvas id="canvas" width="500" height="200"></canvas>
+      <video
+        src="http://localhost:8000/converter/output/video/img2video_output.mp4"
+        controls
+        autoPlay
+      ></video>
       <form onSubmit={handleSubmit}>
         {formValues.map((element, index) => (
           <div className="form-inline" key={index}>
