@@ -6,6 +6,9 @@ function App() {
   const [uploaded, setUploaded] = useState(false);
   const [generated, setGenerated] = useState(false);
   const [frames, setFrames] = useState([]);
+  const [audioURL, setAudioURL] = useState(
+    "https://www.bensound.com/bensound-music/bensound-anewbeginning.mp3"
+  );
 
   let handleChange = (i, e) => {
     let newFormValues = [...formValues];
@@ -50,6 +53,37 @@ function App() {
     generateVideo();
   };
 
+  const handleAudioChange = (e) => {
+    setAudioURL(e.target.value);
+  };
+
+  const handleSetAudio = () => {
+    const makeRequest = async () => {
+      console.log("submitting......");
+      const audioURLtoSend = JSON.stringify({
+        audioURL: audioURL,
+      });
+      console.log("audioURLtoSend ", audioURLtoSend);
+
+      const response = await fetch(
+        "http://localhost:8000/converter/setaudio/",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: audioURLtoSend,
+        }
+      );
+      const res = await response.json();
+      if (res.upload === "complete") {
+        setFrames(res.frames);
+        setUploaded(true);
+      }
+
+      console.log(res);
+    };
+    makeRequest();
+  };
+
   let handleSubmit = (event) => {
     console.log("submitting");
 
@@ -80,18 +114,31 @@ function App() {
   };
 
   return (
-    <div>
+    <div className="main">
       {generated && (
         <video
+          className="video-player"
           src="http://localhost:8000/converter/output/video/img2video_output.mp4"
           controls
           autoPlay
         ></video>
       )}
-      <form onSubmit={handleSubmit}>
+      <div className="audio-input">
+        <label>Enter URLs of your music </label>
+        <div>
+          <input
+            type="url"
+            name="audiourl"
+            value={audioURL || ""}
+            onChange={(e) => handleAudioChange(e)}
+          />
+          <button onClick={() => handleSetAudio()}>Set Audio</button>
+        </div>
+      </div>
+      <form onSubmit={handleSubmit} className="urlForm">
+        <label>Enter URLs of your images </label>
         {formValues.map((element, index) => (
           <div className="form-inline" key={index}>
-            <label>URL</label>
             <input
               type="url"
               name="url"

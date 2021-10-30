@@ -29,7 +29,7 @@ var download = function (uri, filename, callback) {
         "close",
         function () {
           sharp(__dirname + "/images/img" + filename)
-            .resize(640, 520)
+            .resize(640, 480)
             .jpeg({ quality: 100 })
             .toFile(__dirname + "/converted_images/img" + filename)
             .then((data) => {
@@ -100,7 +100,9 @@ module.exports.Generator = async (req, res) => {
 
     try {
       await videoshow(frames, videoOptions)
-        // .audio("song.mp3")
+        .audio(
+          "https://www.bensound.com/bensound-music/bensound-anewbeginning.mp3"
+        )
         .save("../server/converter/output/video/img2video_output.mp4")
         .on("start", function (command) {
           console.log("ffmpeg process started:", command);
@@ -154,4 +156,27 @@ module.exports.ShowVideo = (req, res) => {
       }
     }
   );
+};
+
+module.exports.SetAudio = (req, res) => {
+  const audioURL = req.body.audioURL;
+  console.log("Trying to set audio ", req);
+  request.head(audioURL, function (err, res, body) {
+    console.log("content-type:", res.headers["content-type"]);
+    console.log("content-length:", res.headers["content-length"]);
+
+    request(audioURL)
+      .pipe(
+        fs.createWriteStream(path.join("../server/converter/audio/audio.mp3"))
+      )
+      .on("close", () => {
+        return res.status(200).json({
+          status: "complete",
+        });
+      });
+  });
+
+  return res.status(200).json({
+    status: "incomplete",
+  });
 };
