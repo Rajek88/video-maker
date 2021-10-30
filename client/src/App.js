@@ -121,6 +121,7 @@ function App() {
   // App UI
   return (
     <div className="main">
+      <h1>Rajendra's Img2Video Converter</h1>
       {generated && (
         <video
           className="video-player"
