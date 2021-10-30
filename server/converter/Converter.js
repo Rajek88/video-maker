@@ -9,6 +9,7 @@ const request = require("request");
 var fs = require("fs");
 const path = require("path");
 const fsExtra = require("fs-extra");
+const sharp = require("sharp");
 // const conv = new ffmpeg.Converter();
 
 let count = 0;
@@ -24,46 +25,22 @@ var download = function (uri, filename, callback) {
           path.join("../server/converter/images/", "img" + filename)
         )
       )
-      .on("close", callback);
+      .on(
+        "close",
+        function () {
+          sharp(__dirname + "/images/img" + filename)
+            .resize(640, 520)
+            .jpeg({ quality: 100 })
+            .toFile(__dirname + "/converted_images/img" + filename)
+            .then((data) => {
+              console.log("Done Resizing");
+              return;
+            });
+        },
+        callback
+      );
   });
   count++;
-};
-
-const generateVideo = async (frames) => {
-  var videoOptions = {
-    fps: 25,
-    loop: 5, // seconds
-    transition: true,
-    transitionDuration: 1, // seconds
-    videoBitrate: 1024,
-    videoCodec: "libx264",
-    size: "640x?",
-    audioBitrate: "128k",
-    audioChannels: 2,
-    format: "mp4",
-    pixelFormat: "yuv420p",
-  };
-
-  try {
-    await videoshow(frames, videoOptions)
-      // .audio("song.mp3")
-      .save("../server/converter/output/video/img2video_output.mp4")
-      .on("start", function (command) {
-        console.log("ffmpeg process started:", command);
-      })
-      .on("error", function (err, stdout, stderr) {
-        console.error("Error:", err);
-        console.error("ffmpeg stderr:", stderr);
-        return "error";
-      })
-      .on("end", function (output) {
-        console.error("Video created in:", output);
-        fsExtra.emptyDirSync("../server/converter/images/");
-        return "success";
-      });
-  } catch (error) {
-    return "error";
-  }
 };
 
 module.exports.Converter = async function (req, res) {
@@ -77,7 +54,10 @@ module.exports.Converter = async function (req, res) {
         console.log("done");
       });
       frames.push(
-        path.join("../server/converter/images/", "img" + (count - 1) + ".jpeg")
+        path.join(
+          "../server/converter/converted_images/",
+          "img" + (count - 1) + ".jpeg"
+        )
       );
     });
 
@@ -101,16 +81,57 @@ module.exports.Converter = async function (req, res) {
 //to do : create new route Generate Video which will give me link
 
 module.exports.Generator = async (req, res) => {
+  //generate video
+
+  const generateVideo = async (frames) => {
+    var videoOptions = {
+      fps: 25,
+      loop: 5, // seconds
+      transition: true,
+      transitionDuration: 1, // seconds
+      videoBitrate: 1024,
+      videoCodec: "libx264",
+      size: "640x?",
+      audioBitrate: "128k",
+      audioChannels: 2,
+      format: "mp4",
+      pixelFormat: "yuv420p",
+    };
+
+    try {
+      await videoshow(frames, videoOptions)
+        // .audio("song.mp3")
+        .save("../server/converter/output/video/img2video_output.mp4")
+        .on("start", function (command) {
+          console.log("ffmpeg process started:", command);
+        })
+        .on("error", function (err, stdout, stderr) {
+          console.error("Error:", err);
+          console.error("ffmpeg stderr:", stderr);
+          return "error";
+        })
+        .on("end", function (output) {
+          console.error("Video created in:", output);
+          fsExtra.emptyDirSync("../server/converter/images/");
+          fsExtra.emptyDirSync("../server/converter/converted_images/");
+          return res.status(200).json({
+            status: "complete",
+            videoURL:
+              "http://localhost:8000/converter/output/video/img2video_output.mp4",
+          });
+        });
+    } catch (error) {
+      return "error";
+    }
+  };
+
+  //handle req
   console.log("in Generator : ", req.body);
   let frames = req.body;
   try {
     const status = await generateVideo(frames);
+
     // console.log("generate status : ", status);
-    return res.status(200).json({
-      status: "complete",
-      videoURL:
-        "http://localhost:8000/converter/output/video/img2video_output.mp4",
-    });
   } catch (error) {
     return res.status(200).json({
       status: "incomplete",
