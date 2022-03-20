@@ -23,7 +23,18 @@ const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use("/", express.static(__dirname + "converter/output"));
+
 app.use(cors());
+
+// Accessing the path module
+const path = require("path");
+
+// Step 1:
+app.use(express.static(path.resolve(__dirname, "./build")));
+// Step 2:
+app.get("/", function (request, response) {
+  response.sendFile(path.resolve(__dirname, "./build", "index.html"));
+});
 
 // express router
 //start listening ti request

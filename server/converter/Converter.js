@@ -10,12 +10,14 @@ var fs = require("fs");
 const path = require("path");
 const fsExtra = require("fs-extra");
 const sharp = require("sharp");
+const { BASE_URL } = require("../AppConfig");
+
 // const conv = new ffmpeg.Converter();
 
 let count = 0;
 
 // this is download function which will download our image files
-var download = function (uri, filename, callback) {
+const download = async (uri, filename, callback) => {
   request.head(uri, function (err, res, body) {
     console.log("content-type:", res.headers["content-type"]);
     console.log("content-length:", res.headers["content-length"]);
@@ -127,8 +129,7 @@ module.exports.Generator = async (req, res) => {
           fsExtra.emptyDirSync("../server/converter/converted_images/");
           return res.status(200).json({
             status: "complete",
-            videoURL:
-              "http://localhost:8000/converter/output/video/img2video_output.mp4",
+            videoURL: BASE_URL + "/converter/output/video/img2video_output.mp4",
           });
         });
     } catch (error) {
@@ -147,8 +148,7 @@ module.exports.Generator = async (req, res) => {
   } catch (error) {
     return res.status(200).json({
       status: "incomplete",
-      videoURL:
-        "http://localhost:8000/converter/output/video/img2video_output.mp4",
+      videoURL: BASE_URL + "/converter/output/video/img2video_output.mp4",
     });
   }
 };
@@ -183,7 +183,7 @@ module.exports.SetAudio = (req, res) => {
         fs.createWriteStream(path.join("../server/converter/audio/audio.mp3"))
       )
       .on("close", () => {
-        return res.status(200).json({
+        return res.status(200).send({
           status: "complete",
         });
       });
