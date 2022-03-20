@@ -1,4 +1,4 @@
-export function img2vid(imgUrlObj) {
+export const img2vid = async (imgUrlObj) => {
   var canvas = document.querySelector("#canvas");
   var rec = document.querySelector("#rec");
   console.log(imgUrlObj);
@@ -14,10 +14,10 @@ export function img2vid(imgUrlObj) {
     recorder,
     chunks = [];
 
-  rec.onclick = function () {
+  rec.onclick = async function () {
     this.textContent = "stop recording";
     // set the framerate to 30FPS
-    cStream = canvas.captureStream(30);
+    cStream = await canvas.captureStream(30);
     // create a recorder fed with our canvas' stream
     recorder = new MediaRecorder(cStream);
     // start it
@@ -67,4 +67,4 @@ export function img2vid(imgUrlObj) {
     requestAnimationFrame(anim);
   };
   anim();
-}
+};

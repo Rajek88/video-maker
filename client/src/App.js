@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { BASE_URL } from "./AppConfig";
 // import { img2vid } from "./Converter";
 
 function App() {
@@ -9,6 +10,7 @@ function App() {
   const [frames, setFrames] = useState([]);
   const [loop, setLoop] = useState(5);
   const [fps, setfps] = useState(25);
+  const [loading, setLoading] = useState(false);
   // const loop = 5;
   // const fps = 25;
   // this will be my default audio initially
@@ -43,7 +45,7 @@ function App() {
   };
 
   // when user clicks on generate button
-  let handleGenerate = () => {
+  let handleGenerate = async () => {
     setGenerated(false);
     console.log("in React  frames ", frames);
     // send all the urls stored in frames by stringifying it
@@ -52,27 +54,28 @@ function App() {
       fps: fps,
       loop: loop,
     });
+    setLoading(true);
     const generateVideo = async () => {
-      const response = await fetch(
-        "http://localhost:8000/converter/generate/",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: sendBody,
-        }
-      );
+      const response = await fetch(BASE_URL + "/converter/generate/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: sendBody,
+      });
       const res = await response.json();
       if (res.status === "complete") {
         console.log("After generate : ", res);
-        setTimeout(() => {
-          setGenerated(true);
-          setUploaded(false);
-        }, frames.length * 1200);
+        // ------------------------- Delay added here -------------------------
+        // setTimeout(() => {
+        setGenerated(true);
+        setLoading(false);
+        setUploaded(false);
+        // }, frames.length * 1200);
       } else {
+        setLoading(false);
         setGenerated(false);
       }
     };
-    generateVideo();
+    await generateVideo();
   };
 
   // handle when audio url is getting changed
@@ -81,7 +84,7 @@ function App() {
   };
 
   // handle when user clicks on set audio
-  const handleSetAudio = () => {
+  const handleSetAudio = async () => {
     const makeRequest = async () => {
       console.log("submitting......");
       const audioURLtoSend = JSON.stringify({
@@ -89,23 +92,20 @@ function App() {
       });
       console.log("audioURLtoSend ", audioURLtoSend);
 
-      const response = await fetch(
-        "http://localhost:8000/converter/setaudio/",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: audioURLtoSend,
-        }
-      );
+      const response = await fetch(BASE_URL + "/converter/setaudio/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: audioURLtoSend,
+      });
       const res = await response.json();
 
       console.log(res);
     };
-    makeRequest();
+    await makeRequest();
   };
 
   // handle when user clicks on submit button
-  let handleSubmit = (event) => {
+  let handleSubmit = async (event) => {
     console.log("submitting");
 
     event.preventDefault();
@@ -118,7 +118,7 @@ function App() {
     const makeRequest = async () => {
       console.log("submitting......");
 
-      const response = await fetch("http://localhost:8000/converter/convert/", {
+      const response = await fetch(BASE_URL + "/converter/convert/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: toSend,
@@ -131,7 +131,7 @@ function App() {
 
       console.log(res);
     };
-    makeRequest();
+    await makeRequest();
   };
   // App UI
   return (
@@ -140,12 +140,12 @@ function App() {
       {generated && (
         <video
           className="video-player"
-          src="http://localhost:8000/converter/output/video/img2video_output.mp4"
+          src={BASE_URL + "/converter/output/video/img2video_output.mp4"}
           controls
           autoPlay
         ></video>
       )}
-      <div className="video-options">
+      <div className="video-options" style={{ display: "none" }}>
         <label>Video Settings</label>
 
         <div className="video-options-left">
@@ -153,6 +153,7 @@ function App() {
           <input
             type="number"
             max="10"
+            min="1"
             value={loop}
             name="loop"
             onChange={(e) => handleLoopChange(e)}
@@ -162,7 +163,8 @@ function App() {
           Frames oer second ( FPS )
           <input
             type="number"
-            max="50"
+            max="25"
+            min="10"
             value={fps}
             name="fps"
             onChange={(e) => handleFpsChange(e)}
@@ -220,11 +222,12 @@ function App() {
         </div>
       </form>
 
-      {uploaded && (
+      {uploaded && !loading && (
         <button className="button generate" onClick={() => handleGenerate()}>
           Generate Video
         </button>
       )}
+      {loading && <h2>Loading...</h2>}
     </div>
   );
 }
