@@ -3,6 +3,7 @@
 # dependencies
 /client/node_modules
 /server/node_modules
+/server/img2video-win32-x64
 /.pnp
 .pnp.js
 
