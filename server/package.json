@@ -7,12 +7,8 @@
     "node": "16.13.1"
   },
   "scripts": {
-    "build": "cd client && npm run build",
-    "install-client": "npm install",
-    "heroku-postbuild": "npm run install-client && npm run build",
+    "start": "electron index.js",
     "server": "nodemon index.js",
-    "develop": "concurrently --kill-others-on-fail \"npm run server\" \"npm run start --prefix client\"",
-    "start": "concurrently --kill-others-on-fail \"npm run server\" \"npm run start --prefix client\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Rajendra Kulkarni",
@@ -29,8 +25,12 @@
     "fluent-ffmpeg": "^2.1.2",
     "fs": "0.0.1-security",
     "fs-extra": "^10.0.0",
+    "nodemon": "^2.0.15",
     "request": "^2.88.2",
     "sharp": "^0.29.2",
     "videoshow": "^0.1.12"
+  },
+  "devDependencies": {
+    "electron": "^17.1.2"
   }
 }

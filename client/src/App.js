@@ -65,11 +65,11 @@ function App() {
       if (res.status === "complete") {
         console.log("After generate : ", res);
         // ------------------------- Delay added here -------------------------
-        // setTimeout(() => {
-        setGenerated(true);
-        setLoading(false);
-        setUploaded(false);
-        // }, frames.length * 1200);
+        setTimeout(() => {
+          setGenerated(true);
+          setLoading(false);
+          setUploaded(false);
+        }, frames.length * 2000);
       } else {
         setLoading(false);
         setGenerated(false);

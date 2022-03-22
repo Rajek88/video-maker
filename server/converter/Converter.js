@@ -11,6 +11,7 @@ const path = require("path");
 const fsExtra = require("fs-extra");
 const sharp = require("sharp");
 const { BASE_URL } = require("../AppConfig");
+const { send } = require("process");
 
 // const conv = new ffmpeg.Converter();
 
@@ -18,32 +19,36 @@ let count = 0;
 
 // this is download function which will download our image files
 const download = async (uri, filename, callback) => {
-  request.head(uri, function (err, res, body) {
-    console.log("content-type:", res.headers["content-type"]);
-    console.log("content-length:", res.headers["content-length"]);
+  try {
+    request.head(uri, function (err, res, body) {
+      console.log("content-type:", res.headers["content-type"]);
+      console.log("content-length:", res.headers["content-length"]);
 
-    request(uri)
-      .pipe(
-        fs.createWriteStream(
-          path.join("../server/converter/images/", "img" + filename)
+      request(uri)
+        .pipe(
+          fs.createWriteStream(
+            path.join("../server/converter/images/", "img" + filename)
+          )
         )
-      )
-      .on(
-        "close",
-        function () {
-          sharp(__dirname + "/images/img" + filename)
-            .resize(640, 480)
-            .jpeg({ quality: 100 })
-            .toFile(__dirname + "/converted_images/img" + filename)
-            .then((data) => {
-              console.log("Done Resizing");
-              return;
-            });
-        },
-        callback
-      );
-  });
-  count++;
+        .on(
+          "close",
+          async function () {
+            await sharp(__dirname + "/images/img" + filename)
+              .resize(640, 480)
+              .jpeg({ quality: 100 })
+              .toFile(__dirname + "/converted_images/img" + filename)
+              .then((data) => {
+                console.log("Done Resizing");
+                return;
+              });
+          },
+          callback
+        );
+    });
+    count++;
+  } catch (error) {
+    return res.status(500), send({ err: `${error}` });
+  }
 };
 
 // this wil be get triggered when user clicks on submit button
